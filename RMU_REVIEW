@@ -1,0 +1,4 @@
+I created a class (Table) which basically wraps all the functionality described in spec arround array of arrays.
+
+I also used specifications to create my specs so if you run default rake task you'll see that it confirms to all the points.
+I have also added exaqmples to all example scenarios.
