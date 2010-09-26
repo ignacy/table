@@ -104,5 +104,33 @@ describe Table do
       @table["NotOnlyNumbers"].should == [1, 10, "car"]
       @table["Numbers"].should be_nil
     end
+
+    it "should add a column to the right side" do
+      @table.insert_column(3, [1, 2, 3, 4, 5])
+      @table.rows.count.should eql(5)
+      @table.rows[2].should == ["car", "cdr", nil, 3]
+      @table.rows[3].should == [nil, nil, nil, 4]
+      @table.rows[4].should == [nil, nil, nil, 5]
+    end
+
+    it "should insert a column at any position" do
+      @table.insert_column(1, [1, 2])
+      @table.rows[0].should == [1, 1, 2, 4]
+      @table.rows[1].should == [10, 2, "kret", 21]
+      @table.rows[2].should == ["car", "cdr"]
+    end
+
+    it "should delete any column" do
+      @table.delete_column(1)
+      @table.columns.count.should eql(2)
+      @table.rows[0].should == [1, 4]
+    end
+
+    it "should allow map on columns contents" do
+      @table.transform_column("Numbers") { |n| n.to_s }
+      @table["Numbers"][0].should == "1"
+      @table["Numbers"][1].should be_a String
+      @table["Numbers"][2].should == "car"
+    end
   end
 end

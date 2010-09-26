@@ -37,8 +37,35 @@ class Table
       @columns[index] = new
     end
   end
-  
+
+  def insert_column(at, data)
+    fill_missing_rows_and_columns(data)
+    @rows.each_with_index do |row, index|
+      row.insert(at, data[index]) unless data[index].nil?
+    end
+  end
+
+  def delete_column(column)
+    index = get_index(column)
+    @rows.each { |row| row.delete_at(index) }
+    @columns.delete_at(index)
+  end
+
+  def transform_column(column, &block)
+    index = get_index(column)
+    @rows.each { |row| row[index] = block.call(row[index])  }
+  end
+
+
   private
+
+  def fill_missing_rows_and_columns(data)
+    rows = data.length
+    diff = @rows.count - rows
+    if diff < 0
+      diff.abs.times { @rows << [] }
+    end
+  end
 
   def get_column_contents(n)
     n.nil? ? nil : @rows.inject([]) { |out, row| out << row[n] }
