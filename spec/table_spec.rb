@@ -56,12 +56,53 @@ describe Table do
     end
   end
 
-  context "possible manipulations" do
+  context "possible row manipulations" do
     before :each do
       @table = Table.new [[1, 2, 4], [10, "kret", 21], ["car", "cdr"]]
       @table.columns = ["Numbers", "Something with kret", "CarAndCdr"]
     end
 
+    it "should be possible to get row data" do
+      @table.rows[1].should == [10, "kret", 21]
+    end
 
+    it "should be possible to append a row to the end of a table" do
+      @table << [10, 21]
+      @table.rows.count.should eql(4)
+      @table.rows.last.should == [10, 21]
+    end
+
+    it "should be possible to insert a row at a position" do
+      @table.insert(1, [10, 20, 30])
+      @table.rows[1].should == [10, 20, 30]
+    end
+
+    it "should be possible to delete any row" do
+      @table.delete_at(1)
+      @table.rows.count.should eql(2)
+      @table.rows[1].should == ["car", "cdr"]
+    end
+
+    it "should transform blocks like Enumerable#map" do
+      @table.rows[1] = @table.rows[1].map { |x| x*2 }
+      @table.rows[1].should == [20, "kretkret", 42]      
+    end
+  end
+
+  context "possible column manipulations" do
+     before :each do
+      @table = Table.new [[1, 2, 4], [10, "kret", 21], ["car", "cdr"]]
+      @table.columns = ["Numbers", "Something with kret", "CarAndCdr"]
+    end
+
+    it "retrive column array" do
+      @table["Numbers"].should == [1, 10, "car"]
+    end
+
+    it "should rename a column" do
+      @table.rename_column("Numbers", "NotOnlyNumbers")
+      @table["NotOnlyNumbers"].should == [1, 10, "car"]
+      @table["Numbers"].should be_nil
+    end
   end
 end

@@ -23,15 +23,38 @@ class Table
     get_column_contents(get_index(column))[row]
   end
 
+  def insert(index, row)
+    @rows.insert(index, row)
+  end
+
+  def delete_at(index)
+    @rows.delete_at(index)
+  end
+
+  def rename_column(old, new)
+    index = get_index(old)
+    unless index.nil?
+      @columns[index] = new
+    end
+  end
+  
   private
 
   def get_column_contents(n)
-    @rows.inject([]) { |out, row| out << row[n] }
+    n.nil? ? nil : @rows.inject([]) { |out, row| out << row[n] }
   end
 
   def get_index(column)
     index = @columns.index(column)
-    index.nil? ? column : index
+    if index.nil?
+      if column.is_a? Integer
+        column
+      else
+        nil
+      end
+    else
+      index
+    end
   end
 
 end
