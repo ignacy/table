@@ -133,4 +133,27 @@ describe Table do
       @table["Numbers"][2].should == "car"
     end
   end
+
+  context "filtering" do
+    before :each do
+      @table = Table.new [["some", "text"], ["1", 1, 2], [0, 1, 2]]
+      @table.columns = ["Text", "Both", "Numbers"]
+    end
+
+    it "should reduce rows to those longer then 2" do
+      selected = @table.select_rows { |r| r.length > 2 }
+      selected.should == [["1", 1, 2], [0,1,2]]
+    end
+
+    it "should reduce rows to those containing strings" do
+      selected = @table.select_rows { |r| r.any? {|el| el.is_a? String} }
+      selected.should == [["some", "text"], ["1", 1, 2]]
+    end
+
+    it "should reduce columns to those with only number 2" do
+      selected = @table.select_columns { |c| c.all? { |el| el == 2 }}
+      selected.should == [[2, 2]]
+    end
+  end
+
 end

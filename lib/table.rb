@@ -23,6 +23,34 @@ class Table
     get_column_contents(get_index(column))[row]
   end
 
+  def select_rows(&block)
+    new_rows = []
+    @rows.each do |row|
+      new_rows << row if block.call(row)
+    end
+    return new_rows
+  end
+
+  def select_columns(&block)
+    filtered = []
+    all_columns.each do |column|
+      column = column.delete_if { |el| el.nil? }
+      filtered << column if block.call(column)
+    end
+    return filtered
+  end
+
+  def all_columns
+    columns = []
+    (0..longest_row - 1).to_a.each do |i|
+      @rows.each do |row|
+        columns[i] = [] if columns[i].nil?
+        columns[i] << row[i]
+      end
+    end
+    return columns
+  end
+
   def insert(index, row)
     @rows.insert(index, row)
   end
@@ -84,4 +112,11 @@ class Table
     end
   end
 
+  def longest_row
+    longest = 0
+    @rows.each do |row|
+      longest = row.length if row.length > longest
+    end
+    return longest    
+  end
 end
